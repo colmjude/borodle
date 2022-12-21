@@ -1,0 +1,69 @@
+<div id="borodle">
+			<div id="game-board">
+				<header class="borodle-header">
+         			<i class="far fa-question-circle" id="help"></i>
+          			<h4 class="title">BORODLE</h4>
+        			<i class="fas fa-chart-bar" id="stats"></i>
+		        </header>
+		        <div id="game-container">
+					<h4 id="final-score"></h4>
+					<div id="board"></div>
+				</div>
+				<div id="game-keyboard">
+					<div class="keyboard-row">
+					<button class="keyboard-button" data-key="q">q</button>
+					<button class="keyboard-button" data-key="w">w</button>
+					<button class="keyboard-button" data-key="e">e</button>
+					<button class="keyboard-button" data-key="r">r</button>
+					<button class="keyboard-button" data-key="t">t</button>
+					<button class="keyboard-button" data-key="y">y</button>
+					<button class="keyboard-button" data-key="u">u</button>
+					<button class="keyboard-button" data-key="i">i</button>
+					<button class="keyboard-button" data-key="o">o</button>
+					<button class="keyboard-button" data-key="p">p</button>
+				</div>
+				<div class="keyboard-row">
+					<div class="borodle-half"></div>
+ 		           <button class="keyboard-button" data-key="a">a</button>
+        		    <button class="keyboard-button" data-key="s">s</button>
+		            <button class="keyboard-button" data-key="d">d</button>
+        		    <button class="keyboard-button" data-key="f">f</button>
+		            <button class="keyboard-button" data-key="g">g</button>
+		            <button class="keyboard-button" data-key="h">h</button>
+        		    <button class="keyboard-button" data-key="j">j</button>
+		            <button class="keyboard-button" data-key="k">k</button>
+					<button class="keyboard-button" data-key="l">l</button>
+					<div class="borodle-half"></div>
+				</div>
+				<div class="keyboard-row">
+    	    	    <button class="keyboard-button" data-key="enter" class="wide-button">Enter</button>
+	    	        <button class="keyboard-button" data-key="z">z</button>
+    	    	    <button class="keyboard-button" data-key="x">x</button>
+	    	        <button class="keyboard-button" data-key="c">c</button>
+	            	<button class="keyboard-button" data-key="v">v</button>
+            		<button class="keyboard-button" data-key="b">b</button>
+        	    	<button class="keyboard-button" data-key="n">n</button>
+    	    	    <button class="keyboard-button" data-key="m">m</button>
+	    	        <button class="keyboard-button" data-key="del" class="wide-button">DEL</button>
+	          	</div>
+			</div>
+		</div>
+		<div id="help-modal" class="modal">
+			<!-- Modal content -->
+			<div class="modal-content">
+				<span class="close" id="close-help">&times;</span>
+				<?php the_field('borodle'); ?>
+			</div>
+		</div>
+		<div id="stats-modal" class="modal">
+			<!-- Modal content -->
+			<div class="modal-content">
+			<span class="close" id="close-stats">&times;</span>
+			<h4>STATISTICS</h4>
+			<h5><strong>Total</strong>: <span id="total-played"></span></h5>
+			<h5><strong>Wins</strong>: <span id="total-wins"></span></h5>
+			<h5><strong>Win %</strong>: <span id="win-pct"></span></h5>
+			<h5><strong>Current Streak</strong>: <span id="current-streak"></span></h5>
+			</div>
+		</div>	
+	</div>
