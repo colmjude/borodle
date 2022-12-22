@@ -1,8 +1,15 @@
+function getTodayDate() {
+  const today = new Date();
+  return today.toISOString().slice(0, 10)
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   let currentWordIndex = 0;
   let guessedWordCount = 0;
   let availableSpace = 1;
   let guessedWords = [[]];
+
+  console.log("Today", getTodayDate());
 
   const words = [
       'abbey',
