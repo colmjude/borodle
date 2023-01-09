@@ -5,15 +5,16 @@ function getTodayDate() {
   return today.toISOString().slice(0, 10)
 }
 
-
 // this needs to change to a url that won't change - making repo public and using that will fix it
 const dataEndpoint = "https://gist.githubusercontent.com/colmjude/acf43d91fba2a0b4108d150964d306c6/raw/a8dc5b31d7f56d28722126e7e29a631cc1c9c243/borodle-data.csv"
-function fetchBorodleData() {
+function fetchBorodleData(callback) {
   const dateToday = getTodayDate()
   csv(dataEndpoint).then((data) => {
     const pickForToday = data.filter(i => i['date'] === dateToday)
     if (pickForToday.length) {
-      console.log(pickForToday[0]['name'])
+      if (typeof callback === 'function') {
+        callback(pickForToday[0]['name'])
+      }
     } else {
       // should default to something if it fails to fetch today's pick
       console.log("unable to collect pick for today")
@@ -22,204 +23,20 @@ function fetchBorodleData() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  let currentWordIndex = 0;
   let guessedWordCount = 0;
   let availableSpace = 1;
   let guessedWords = [[]];
 
-  console.log("Today", getTodayDate());
-  fetchBorodleData()
-
-  const words = [
-      'abbey',
-      'adams',
-      'akins',
-      'allan',
-      'allen',
-      'anang',
-      'aneke',
-      'arber',
-      'ayres',
-      'barry',
-      'bates',
-      'bayes',
-      'beard',
-      'beech',
-      'beeke',
-      'berry',
-      'binns',
-      'black',
-      'boydy',
-      'brady',
-      'brock',
-      'brody',
-      'broom',
-      'brown',
-      'brunt',
-      'bunce',
-      'burch',
-      'burke',
-      'burns',
-      'byrne',
-      'byrom',
-      'carey',
-      'casey',
-      'chair',
-      'clark',
-      'coker',
-      'cowan',
-      'croud',
-      'crowe',
-      'darcy',
-      'daley',
-      'dance',
-      'deane',
-      'dieng',
-      'digby',
-      'dixon',
-      'dobbo',
-      'drury',
-      'duffy',
-      'dyson',
-      'eames',
-      'edgar',
-      'ehmer',
-      'evans',
-      'evers',
-      'every',
-      'ewins',
-      'ferry',
-      'field',
-      'flack',
-      'flain',
-      'flood',
-      'flynn',
-      'fryer',
-      'gates',
-      'gibbs',
-      'gitts',
-      'gould',
-      'grant',
-      'green',
-      'grime',
-      'guppy',
-      'haber',
-      'hakim',
-      'hardy',
-      'hayes',
-      'bazza',
-      'hicks',
-      'hills',
-      'hinds',
-      'hobbs',
-      'hunte',
-      'husin',
-      'imber',
-      'inman',
-      'jacko',
-      'jolly',
-      'jones',
-      'joyce',
-      'keane',
-      'kirby',
-      'kirke',
-      'lacey',
-      'laird',
-      'laker',
-      'lakin',
-      'leahy',
-      'lewis',
-      'lines',
-      'lokko',
-      'lomas',
-      'lopez',
-      'louis',
-      'lucey',
-      'luque',
-      'lynch',
-      'madjo',
-      'mahon',
-      'march',
-      'marsh',
-      'mckee',
-      'mcrae',
-      'mills',
-      'moore',
-      'myres',
-      'ngala',
-      'noble',
-      'nolan',
-      'nozza',
-      'ntlhe',
-      'nurse',
-      'oshea',
-      'obeng',
-      'okimo',
-      'opara',
-      'paine',
-      'palma',
-      'paris',
-      'payne',
-      'perez',
-      'pirie',
-      'pluck',
-      'poole',
-      'pratt',
-      'quinn',
-      'roach',
-      'robbo',
-      'roles',
-      'sarll',
-      'scott',
-      'shafe',
-      'sills',
-      'slade',
-      'smart',
-      'smith',
-      'smyth',
-      'sodje',
-      'stamp',
-      'stein',
-      'tagro',
-      'tonge',
-      'toner',
-      'trott',
-      'tyler',
-      'ugbah',
-      'upson',
-      'waite',
-      'watts',
-      'welch',
-      'wells',
-      'welsh',
-      'wezza',
-      'white',
-      ];
+  fetchBorodleData(loadLocalStorage)
       
-      let currentWord = words[currentWordIndex];
+    let currentWord;
 
-    initLocalStorage();
     initHelpModal();
     initStatsModal();
     createSquares();
     addKeyboardClicks();
-    loadLocalStorage();
 
-    function initLocalStorage() {
-      const storedCurrentWordIndex =
-        window.localStorage.getItem("currentWordIndex");
-      if (!storedCurrentWordIndex) {
-        window.localStorage.setItem("currentWordIndex", currentWordIndex);
-      } else {
-        currentWordIndex = Number(storedCurrentWordIndex);
-        currentWord = words[currentWordIndex];
-      }
-    }
-
-    function loadLocalStorage() {
-      currentWordIndex =
-        Number(window.localStorage.getItem("currentWordIndex")) ||
-        currentWordIndex;
+    function loadLocalStorage(nameOfTheDay) {
       guessedWordCount =
         Number(window.localStorage.getItem("guessedWordCount")) ||
         guessedWordCount;
@@ -227,8 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
         Number(window.localStorage.getItem("availableSpace")) || availableSpace;
       guessedWords =
         JSON.parse(window.localStorage.getItem("guessedWords")) || guessedWords;
-  
-      currentWord = words[currentWordIndex];
+
+      currentWord = nameOfTheDay;
   
       const storedBoardContainer = window.localStorage.getItem("boardContainer");
       if (storedBoardContainer) {
@@ -266,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   
-
     function preserveGameState() {
       window.localStorage.setItem("guessedWords", JSON.stringify(guessedWords));
   
@@ -333,11 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
         key.disabled = true;
       }
     }
-  
-    function updateWordIndex() {
-      console.log({ currentWordIndex });
-      window.localStorage.setItem("currentWordIndex", currentWordIndex + 1);
-    }
 
     function getIndicesOfLetter(letter, arr) {
       const indices = [];
@@ -395,11 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
   
       return "incorrect-letter";
     }
-
-    function updateWordIndex() {
-      console.log({ currentWordIndex });
-      window.localStorage.setItem("currentWordIndex", currentWordIndex + 1);
-    }
   
     async function handleSubmitWord() {
       const currentWordArr = getCurrentWordArr();
@@ -444,7 +250,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (okSelected) {
               clearBoard();
               showResult();
-              updateWordIndex();
               updateTotalGames();
               resetGameState();
             }
@@ -458,7 +263,6 @@ document.addEventListener("DOMContentLoaded", () => {
               `Ah no, you've blown it. The word is "${currentWord.toUpperCase()}".`
             );
             if (okSelected) {
-              updateWordIndex();
               updateTotalGames();
               resetGameState();
             }
