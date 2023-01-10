@@ -7,8 +7,7 @@ function getTodayDate() {
 
 // this needs to change to a url that won't change - making repo public and using that will fix it
 const dataEndpoint = "https://gist.githubusercontent.com/colmjude/acf43d91fba2a0b4108d150964d306c6/raw/a8dc5b31d7f56d28722126e7e29a631cc1c9c243/borodle-data.csv"
-function fetchBorodleData(callback) {
-  const dateToday = getTodayDate()
+function fetchBorodleData(dateToday, callback) {
   csv(dataEndpoint).then((data) => {
     const pickForToday = data.filter(i => i['date'] === dateToday)
     if (pickForToday.length) {
@@ -22,12 +21,20 @@ function fetchBorodleData(callback) {
   });
 }
 
+// temp function for testing today mechanics
+function resetPlayedToday() {
+  window.localStorage.removeItem("lastVisitedDate")
+}
+window.resetPlayedToday = resetPlayedToday
+
 document.addEventListener("DOMContentLoaded", () => {
   let guessedWordCount = 0;
   let availableSpace = 1;
   let guessedWords = [[]];
+  let lastVisitedDate = "2021-07-07"
+  let dateToday = getTodayDate()
 
-  fetchBorodleData(loadLocalStorage)
+  fetchBorodleData(dateToday, loadLocalStorage)
       
     let currentWord;
 
@@ -44,8 +51,16 @@ document.addEventListener("DOMContentLoaded", () => {
         Number(window.localStorage.getItem("availableSpace")) || availableSpace;
       guessedWords =
         JSON.parse(window.localStorage.getItem("guessedWords")) || guessedWords;
+      lastVisitedDate =
+        window.localStorage.getItem("lastVisitedDate") || lastVisitedDate;
 
       currentWord = nameOfTheDay;
+
+      if (lastVisitedDate !== dateToday) {
+        console.log('first visit today')
+        resetGameState()
+        updateLastVisitedDate()
+      }
   
       const storedBoardContainer = window.localStorage.getItem("boardContainer");
       if (storedBoardContainer) {
@@ -61,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
         addKeyboardClicks();
       }
+
     }
   
     function resetGameState() {
@@ -81,6 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
         square.setAttribute("id", i + 1);
         gameBoard.appendChild(square);
       }
+    }
+
+    function updateLastVisitedDate() {
+      window.localStorage.setItem("lastVisitedDate", dateToday)
     }
   
     function preserveGameState() {
@@ -219,7 +239,11 @@ document.addEventListener("DOMContentLoaded", () => {
       
         const firstLetterId = guessedWordCount * 5 + 1;
 
+        console.log("First letter id", firstLetterId)
+
         localStorage.setItem("availableSpace", availableSpace);
+
+        console.log("Current word array", currentWordArr)
   
         const interval = 200;
         currentWordArr.forEach((letter, index) => {
@@ -251,7 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
               clearBoard();
               showResult();
               updateTotalGames();
-              resetGameState();
             }
             return;
           }, 1200);
@@ -264,7 +287,6 @@ document.addEventListener("DOMContentLoaded", () => {
             );
             if (okSelected) {
               updateTotalGames();
-              resetGameState();
             }
             return;
           }, 1200);
