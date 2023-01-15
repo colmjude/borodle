@@ -5,8 +5,7 @@ function getTodayDate() {
   return today.toISOString().slice(0, 10)
 }
 
-// this needs to change to a url that won't change - making repo public and using that will fix it
-const dataEndpoint = "https://gist.githubusercontent.com/colmjude/acf43d91fba2a0b4108d150964d306c6/raw/a8dc5b31d7f56d28722126e7e29a631cc1c9c243/borodle-data.csv"
+const dataEndpoint = "https://raw.githubusercontent.com/stripitdown/borodle/main/docs/borodle-data.csv"
 function fetchBorodleData(dateToday, callback) {
   csv(dataEndpoint).then((data) => {
     const pickForToday = data.filter(i => i['date'] === dateToday)
