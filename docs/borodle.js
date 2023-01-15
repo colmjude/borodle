@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initStatsModal();
     createSquares();
     addKeyboardClicks();
+    addKeyboardPresses()
 
     function loadLocalStorage(nameOfTheDay) {
       guessedWordCount =
@@ -334,6 +335,20 @@ document.addEventListener("DOMContentLoaded", () => {
           updateGuessedLetters(key);
         });
       }
+    }
+
+    function addKeyboardPresses() {
+      const $keyboard = document.getElementById('game-keyboard')
+      function keyPressHandler(e) {
+        const pressedKey = e.key.toLowerCase()
+        const $match = $keyboard.querySelectorAll(`[data-key="${pressedKey}"]`)
+        if ($match.length) {
+          $match[0].click()
+        }
+      }
+
+      const $body = document.querySelector('body')
+      $body.addEventListener('keyup', keyPressHandler)
     }
   
     function initHelpModal() {
