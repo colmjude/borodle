@@ -23,6 +23,7 @@ function fetchBorodleData(dateToday, callback) {
 // temp function for testing today mechanics
 function resetPlayedToday() {
   window.localStorage.removeItem("lastVisitedDate")
+  window.localStorage.setItem("completedToday", false)
 }
 window.resetPlayedToday = resetPlayedToday
 
@@ -32,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let guessedWords = [[]];
   let lastVisitedDate = "2021-07-07"
   let dateToday = getTodayDate()
+  let completedToday = false
+  let eventListenersActive = false
 
   fetchBorodleData(dateToday, loadLocalStorage)
       
@@ -40,8 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initHelpModal();
     initStatsModal();
     createSquares();
-    addKeyboardClicks();
-    addKeyboardPresses()
 
     function loadLocalStorage(nameOfTheDay) {
       guessedWordCount =
@@ -53,6 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
         JSON.parse(window.localStorage.getItem("guessedWords")) || guessedWords;
       lastVisitedDate =
         window.localStorage.getItem("lastVisitedDate") || lastVisitedDate;
+      completedToday =
+        (window.localStorage.getItem("completedToday") === 'true') || completedToday;
 
       currentWord = nameOfTheDay;
 
@@ -73,10 +76,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (storedKeyboardContainer) {
         document.getElementById("game-keyboard").innerHTML =
           storedKeyboardContainer;
-  
-        addKeyboardClicks();
       }
 
+      setListeners()
+    }
+
+    function setListeners() {
+      if (!completedToday && !eventListenersActive) {
+        addKeyboardClicks();
+        addKeyboardPresses()
+      }
     }
   
     function resetGameState() {
@@ -85,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.localStorage.removeItem("keyboardContainer");
       window.localStorage.removeItem("boardContainer");
       window.localStorage.removeItem("availableSpace");
+      updateCompletedToday(false);
     }
 
     function createSquares() {
@@ -101,6 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateLastVisitedDate() {
       window.localStorage.setItem("lastVisitedDate", dateToday)
+    }
+
+    function updateCompletedToday(completedToday) {
+      window.localStorage.setItem("completedToday", completedToday)
     }
   
     function preserveGameState() {
@@ -268,6 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.localStorage.setItem("guessedWordCount", guessedWordCount);
   
         if (guessedWord === currentWord) {
+          updateCompletedToday(true);
           setTimeout(() => {
             const okSelected = window.confirm(
               `Yes! Bang on target! The word is "${currentWord.toUpperCase()}".`);
@@ -281,6 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
   
         if (guessedWords.length === 6 && guessedWord !== currentWord) {
+          updateCompletedToday(true);
           setTimeout(() => {
             const okSelected = window.confirm(
               `Ah no, you've blown it. The word is "${currentWord.toUpperCase()}".`
