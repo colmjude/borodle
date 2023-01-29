@@ -359,6 +359,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const $match = $keyboard.querySelectorAll(`[data-key="${pressedKey}"]`)
         if ($match.length) {
           $match[0].click()
+        } else if (pressedKey === 'backspace') {
+          handleDelete();
+          return;
         }
       }
 
