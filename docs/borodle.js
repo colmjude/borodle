@@ -29,7 +29,7 @@ window.resetPlayedToday = resetPlayedToday
 
 document.addEventListener("DOMContentLoaded", () => {
   let guessedWordCount = 0;
-  let availableSpace = 1;
+  let availableSpace = 1; // used to decide where next guessed letter is added
   let guessedWords = [[]];
   let lastVisitedDate = "2021-07-07"
   let dateToday = getTodayDate()
@@ -89,11 +89,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     function resetGameState() {
-      window.localStorage.removeItem("guessedWordCount");
+      // remove saved state from local storage
       window.localStorage.removeItem("guessedWords");
       window.localStorage.removeItem("keyboardContainer");
       window.localStorage.removeItem("boardContainer");
-      window.localStorage.removeItem("availableSpace");
+
+      // reset counts to initial numbers
+      window.localStorage.setItem("guessedWordCount", 0);
+      window.localStorage.setItem("availableSpace", 1);
+      
       updateCompletedToday(false);
     }
 
